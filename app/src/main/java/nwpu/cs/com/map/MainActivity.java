@@ -174,7 +174,6 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case R.id.menu_mode_common:
                 mLocationMode = LocationMode.NORMAL;
-                System.out.println("+1s");
                 break;
             case R.id.menu_mode_follow:
                 mLocationMode = LocationMode.FOLLOWING;
