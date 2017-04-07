@@ -42,7 +42,8 @@ public class MainActivity extends AppCompatActivity {
     private BitmapDescriptor mIconLocation;
     private MyOrientationListener myOrientationListener;
     private float mCurrentX;
-
+    //自定义模式
+    private LocationMode mLocationMode;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,6 +65,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initLocation() {
+        mLocationMode = LocationMode.NORMAL;
         mLocationClient = new LocationClient(context);
         mLocationListener = new MyLocationListener();
         mLocationClient.registerLocationListener(mLocationListener);
@@ -170,6 +172,16 @@ public class MainActivity extends AppCompatActivity {
                 MapStatusUpdate msu = MapStatusUpdateFactory.newLatLng(latlng);
                 mBaiduMap.animateMapStatus(msu);
                 break;
+            case R.id.menu_mode_common:
+                mLocationMode = LocationMode.NORMAL;
+                System.out.println("+1s");
+                break;
+            case R.id.menu_mode_follow:
+                mLocationMode = LocationMode.FOLLOWING;
+                break;
+            case R.id.menu_mode_compass:
+                mLocationMode = LocationMode.COMPASS;
+                break;
             default:
                 break;
         }
@@ -189,7 +201,7 @@ public class MainActivity extends AppCompatActivity {
 
             mBaiduMap.setMyLocationData(data);
             //自定义图标
-            MyLocationConfiguration config = new MyLocationConfiguration(LocationMode.NORMAL,true,mIconLocation);
+            MyLocationConfiguration config = new MyLocationConfiguration(mLocationMode,true,mIconLocation);
             mBaiduMap.setMyLocationConfigeration(config);
 
             //获取经纬度 为了显示当前位置
@@ -215,3 +227,4 @@ public class MainActivity extends AppCompatActivity {
 
 
 }
+

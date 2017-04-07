@@ -20,4 +20,20 @@
         android:id="@+id/menu_location"
         app:showAsAction="never"
         android:title="我的位置"/>
+
+    <item
+        android:id="@+id/menu_mode_common"
+        app:showAsAction="never"
+        android:title="普通模式"/>
+
+    <item
+        android:id="@+id/menu_mode_follow"
+        app:showAsAction="never"
+        android:title="跟随模式"/>
+
+    <item
+        android:id="@+id/menu_mode_compass"
+        app:showAsAction="never"
+        android:title="罗盘模式"/>
+
 </menu>
