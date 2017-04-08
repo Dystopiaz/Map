@@ -8,3 +8,8 @@ Map App in test version
 卫星地图
 交通地图
 方向传感器
+
+### 20170407 version
+
+罗盘模式
+跟随模式
