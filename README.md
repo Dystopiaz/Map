@@ -1,9 +1,9 @@
 #Branch ljm
 By standardchar
-#Map
+##Map
 Map App in test version
-## 功能
-### 20170406 version
+### 功能
+#### 20170406 version
 
 定位
 普通地图
@@ -11,7 +11,7 @@ Map App in test version
 交通地图
 方向传感器
 
-### 20170407 version
+#### 20170407 version
 
 罗盘模式
 跟随模式
