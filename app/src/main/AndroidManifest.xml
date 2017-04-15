@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="nwpu.cs.com.map">
 
@@ -14,13 +13,13 @@
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.CALL_PHONE" />
     <!-- 使用GPS定位的话，需要如下权限 -->
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-    <!-- 这个权限用于进行网络定位-->
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-    <!-- SD卡读取权限，用户写入离线定位数据-->
-    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <!-- 这个权限用于进行网络定位 -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <!-- SD卡读取权限，用户写入离线定位数据 -->
+    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
+    <uses-permission android:name="android.permission.SENSOR_SERVICE" />
 
-    <uses-permission android:name="android.permission.SENSOR_SERVICE"/>
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -37,18 +36,20 @@
 
         <meta-data
             android:name="com.baidu.lbsapi.API_KEY"
-            android:value="5n2H5ntCNnyvMIDMvLoKNVdIWWvAO3LU" />
+            android:value="STUyXfvXa0BVjLTSkRwN6KtdElBCjw6n" />
 
         <service
             android:name="com.baidu.location.f"
             android:enabled="true"
             android:process=":remote">
             <intent-filter>
-                <action android:name="com.baidu.location.service_v2.2">
-                </action>
-            </intent-filter>>
+                <action android:name="com.baidu.location.service_v2.2" />
+            </intent-filter>
+            >
         </service>
 
+        <activity android:name=".Search" />
+        <activity android:name=".path"></activity>
     </application>
 
 </manifest>
