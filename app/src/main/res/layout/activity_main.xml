@@ -3,11 +3,53 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="nwpu.cs.com.map.MainActivity">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context="nwpu.cs.com.map.activities.MainActivity">
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
     <com.baidu.mapapi.map.MapView
         android:id="@+id/bmapView"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:clickable="true" />
+
+    <ImageButton
+        android:id="@+id/imageButton_search"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@mipmap/icon_geo"
+        android:layout_marginTop="30dp"
+        android:layout_marginLeft="330dp"/>
+
+    <ImageButton
+        android:id="@+id/imageButton_myposition"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/imageButton_search"
+        android:src="@mipmap/arrow"
+        android:layout_marginTop="400dp"/>
+
+    <Button
+        android:id="@+id/path_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/imageButton_myposition"
+        android:layout_below="@+id/imageButton_search"
+        android:layout_marginTop="400dp"
+        android:text="路径"
+        android:layout_marginLeft="250dp" />
+
+    </RelativeLayout>
+
+
+    <!--底部导航栏控件-->
+    <!--<android.support.design.widget.BottomNavigationView-->
+        <!--android:id="@+id/bottom_navigation"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_alignParentBottom="true"-->
+        <!--app:menu="@menu/options_menu">-->
+    <!--</android.support.design.widget.BottomNavigationView>-->
 </android.support.constraint.ConstraintLayout>
