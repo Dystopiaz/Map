@@ -15,3 +15,8 @@ Map App in test version
 
 罗盘模式
 跟随模式
+
+### 201704016 version
+
+Path支持路径规划
+Search支持POI搜索
