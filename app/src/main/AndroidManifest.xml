@@ -26,7 +26,8 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity android:name=".activities.MainActivity"
+            android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -36,7 +37,7 @@
 
         <meta-data
             android:name="com.baidu.lbsapi.API_KEY"
-            android:value="STUyXfvXa0BVjLTSkRwN6KtdElBCjw6n" />
+            android:value="pf8vPrUNMYKLLxv3azAOeEPwQvSxRGGo" />
 
         <service
             android:name="com.baidu.location.f"
@@ -48,8 +49,8 @@
             >
         </service>
 
-        <activity android:name=".Search" />
-        <activity android:name=".path"></activity>
+        <activity android:name=".activities.Search"></activity>
+        <activity android:name=".activities.Path"></activity>
     </application>
 
 </manifest>
