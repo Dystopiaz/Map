@@ -1,13 +1,13 @@
 <component name="libraryTable">
   <library name="support-media-compat-25.0.1">
     <CLASSES>
-      <root url="jar://$USER_HOME$/.android/build-cache/92347a97dc02668b7b03437fe93f6d12e95d3e80/output/jars/classes.jar!/" />
-      <root url="jar://$USER_HOME$/.android/build-cache/92347a97dc02668b7b03437fe93f6d12e95d3e80/output/jars/libs/internal_impl-25.0.1.jar!/" />
-      <root url="file://$USER_HOME$/.android/build-cache/92347a97dc02668b7b03437fe93f6d12e95d3e80/output/res" />
+      <root url="jar://$USER_HOME$/.android/build-cache/d7b91879277ad2001dbc0426aeb00af7391b05d1/output/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.android/build-cache/d7b91879277ad2001dbc0426aeb00af7391b05d1/output/res" />
+      <root url="jar://$USER_HOME$/.android/build-cache/d7b91879277ad2001dbc0426aeb00af7391b05d1/output/jars/libs/internal_impl-25.0.1.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
-      <root url="jar://$USER_HOME$/Library/Android/android-sdk-macosx/extras/android/m2repository/com/android/support/support-media-compat/25.0.1/support-media-compat-25.0.1-sources.jar!/" />
+      <root url="jar://F:/andriod/android-sdk_r24.4.1-windows/android-sdk-windows/extras/android/m2repository/com/android/support/support-media-compat/25.0.1/support-media-compat-25.0.1-sources.jar!/" />
     </SOURCES>
   </library>
 </component>

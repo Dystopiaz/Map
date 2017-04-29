@@ -50,6 +50,7 @@ public class MainActivity extends AppCompatActivity implements OnGetPoiSearchRes
     private ImageButton search;
     private ImageButton myposition;
     private Button path_button;
+    private Button select_city;
 
     //地图
     private MapView mMapView = null;
@@ -155,9 +156,10 @@ public class MainActivity extends AppCompatActivity implements OnGetPoiSearchRes
 
     private void initView() {
 
-        search = (ImageButton)findViewById(R.id.imageButton_search);
-        myposition = (ImageButton)findViewById(R.id.imageButton_myposition);
-        path_button = (Button)findViewById(R.id.path_button);
+        search = (ImageButton) findViewById(R.id.imageButton_search);
+        myposition = (ImageButton) findViewById(R.id.imageButton_myposition);
+        path_button = (Button) findViewById(R.id.path_button);
+        select_city = (Button) findViewById(R.id.select_city_button);
         //初始化内容
         //获取地图控件引用
         mMapView = (MapView) findViewById(R.id.bmapView);
@@ -173,7 +175,7 @@ public class MainActivity extends AppCompatActivity implements OnGetPoiSearchRes
         myposition.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                LatLng latlng = new LatLng(mLatitude,mLongitude);
+                LatLng latlng = new LatLng(mLatitude, mLongitude);
                 MapStatusUpdate msu = MapStatusUpdateFactory.newLatLng(latlng);
                 mBaiduMap.animateMapStatus(msu);
             }
@@ -182,14 +184,13 @@ public class MainActivity extends AppCompatActivity implements OnGetPoiSearchRes
         search.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(mbdlocation == null){
-                    Toast.makeText(MainActivity.this,"定位失败，请打开移动网络或GPS,再尝试",Toast.LENGTH_LONG).show();
-                }
-                else {
-                    Intent intent = new Intent(MainActivity.this,Search.class);
-                    intent.putExtra("bdlocation_data",mbdlocation);
+                if (mbdlocation == null) {
+                    Toast.makeText(MainActivity.this, "定位失败，请打开移动网络或GPS,再尝试", Toast.LENGTH_LONG).show();
+                } else {
+                    Intent intent = new Intent(MainActivity.this, Search.class);
+                    intent.putExtra("bdlocation_data", mbdlocation);
 //                    startActivity(intent);
-                    startActivityForResult(intent,1);
+                    startActivityForResult(intent, 1);
 
                 }
 
@@ -198,18 +199,27 @@ public class MainActivity extends AppCompatActivity implements OnGetPoiSearchRes
         path_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this,Path.class);
-                intent.putExtra("MyPosition",mbdlocation);
+                Intent intent = new Intent(MainActivity.this, Path.class);
+                intent.putExtra("MyPosition", mbdlocation);
                 startActivity(intent);
 
             }
         });
+        //点击选择城市按钮
+        select_city.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, SelectCity.class);
+                intent.putExtra("bdlocation_data", mbdlocation);
+//                    startActivity(intent);
+                startActivityForResult(intent, 2);
+            }
+        });
     }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode!=1)
+        if(requestCode!=1&&requestCode!=2)
             return;
         if(resultCode == RESULT_OK){
             String TargetAddr = data.getStringExtra("search_target");
@@ -220,6 +230,9 @@ public class MainActivity extends AppCompatActivity implements OnGetPoiSearchRes
             mPoiSearch.searchInCity((new PoiCitySearchOption())
                     .city(mbdlocation.getCity().toString())
                     .keyword(TargetAddr));
+        }
+        if(resultCode == 2){
+            //selectcity返回的城市选择数据
         }
     }
 
