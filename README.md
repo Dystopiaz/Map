@@ -18,3 +18,7 @@ Map App in test version
 
 Path支持路径规划
 Search支持POI搜索
+
+### 201704029 version
+
+删除.idea/文件
