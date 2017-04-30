@@ -50,6 +50,7 @@ public class MainActivity extends AppCompatActivity implements OnGetPoiSearchRes
     private ImageButton search;
     private ImageButton myposition;
     private Button path_button;
+    private Button select_city_button;
 
     //地图
     private MapView mMapView = null;
@@ -158,6 +159,7 @@ public class MainActivity extends AppCompatActivity implements OnGetPoiSearchRes
         search = (ImageButton)findViewById(R.id.imageButton_search);
         myposition = (ImageButton)findViewById(R.id.imageButton_myposition);
         path_button = (Button)findViewById(R.id.path_button);
+        select_city_button = (Button)findViewById(R.id.select_city_button);
         //初始化内容
         //获取地图控件引用
         mMapView = (MapView) findViewById(R.id.bmapView);
@@ -204,12 +206,21 @@ public class MainActivity extends AppCompatActivity implements OnGetPoiSearchRes
 
             }
         });
+        select_city_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this,SelectCity.class);
+                intent.putExtra("bdlocation_data",mbdlocation);
+                startActivityForResult(intent,2);
+            }
+        });
+
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode!=1)
+        if(requestCode!=1&&requestCode!=2)
             return;
         if(resultCode == RESULT_OK){
             String TargetAddr = data.getStringExtra("search_target");
@@ -220,6 +231,13 @@ public class MainActivity extends AppCompatActivity implements OnGetPoiSearchRes
             mPoiSearch.searchInCity((new PoiCitySearchOption())
                     .city(mbdlocation.getCity().toString())
                     .keyword(TargetAddr));
+        }
+        if(resultCode == 2){
+            String SelectCityResult = data.getStringExtra("SelectCityResult");
+            if(SelectCityResult!=null){
+                Toast.makeText(MainActivity.this, SelectCityResult, Toast.LENGTH_LONG);
+                System.out.println("selectcityresult"+SelectCityResult);
+            }
         }
     }
 
