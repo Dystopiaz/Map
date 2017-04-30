@@ -16,10 +16,10 @@
         app:showAsAction="never"
         android:title="实时交通(off)"/>
 
-    <item
-        android:id="@+id/menu_location"
-        app:showAsAction="never"
-        android:title="我的位置"/>
+    <!--<item-->
+        <!--android:id="@+id/menu_location"-->
+        <!--app:showAsAction="never"-->
+        <!--android:title="我的位置"/>-->
 
     <item
         android:id="@+id/menu_mode_common"
