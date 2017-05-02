@@ -22,3 +22,7 @@ Search支持POI搜索
 ### 201704029 version
 
 删除.idea/文件
+
+### 20170501 version
+
+选择城市
