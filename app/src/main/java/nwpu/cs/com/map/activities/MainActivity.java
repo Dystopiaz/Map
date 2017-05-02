@@ -20,6 +20,7 @@ import com.baidu.mapapi.SDKInitializer;
 import com.baidu.mapapi.map.BaiduMap;
 import com.baidu.mapapi.map.BitmapDescriptor;
 import com.baidu.mapapi.map.BitmapDescriptorFactory;
+import com.baidu.mapapi.map.MapPoi;
 import com.baidu.mapapi.map.MapStatusUpdate;
 import com.baidu.mapapi.map.MapStatusUpdateFactory;
 import com.baidu.mapapi.map.MapView;
@@ -50,7 +51,7 @@ import nwpu.cs.com.map.overlaytuil.PoiOverlay;
 import static com.baidu.mapapi.map.MyLocationConfiguration.*;
 
 
-public class MainActivity extends AppCompatActivity implements OnGetPoiSearchResultListener,OnGetGeoCoderResultListener {
+public class MainActivity extends AppCompatActivity implements OnGetPoiSearchResultListener,OnGetGeoCoderResultListener{
     //底部导航栏（未实现）
 //    private BottomNavigationView bottomNavigationView;
     private ImageButton search;
@@ -70,13 +71,15 @@ public class MainActivity extends AppCompatActivity implements OnGetPoiSearchRes
     private double mLatitude;
     private double mLongitude;
     private String targetaddr = null;
+    //当前点击位置，用于地图点击事件和地图poi点击事件，不用于mLatitude和mLongitude的当前定位位置
+    private LatLng currentPt;
     // 自定义图标
     private BitmapDescriptor mIconLocation;
     private MyOrientationListener myOrientationListener;
     private float mCurrentX;
     //自定义模式
     private LocationMode mLocationMode;
-//     poi搜索
+   //poi搜索
     private PoiSearch mPoiSearch = null;
     //编码搜索
     private GeoCoder mSearch = null;
@@ -173,6 +176,26 @@ public class MainActivity extends AppCompatActivity implements OnGetPoiSearchRes
         mSearch = GeoCoder.newInstance();
         mSearch.setOnGetGeoCodeResultListener(this);
 
+        mBaiduMap.setOnMapClickListener(new BaiduMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(LatLng latLng) {
+                currentPt = latLng;
+                Toast.makeText(MainActivity.this,"点击位置经度："+currentPt.longitude+" 纬度："+currentPt.latitude,Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public boolean onMapPoiClick(MapPoi mapPoi) {
+                mBaiduMap.clear();
+                currentPt = mapPoi.getPosition();
+                MapStatusUpdate msu = MapStatusUpdateFactory.newLatLng(currentPt);
+                mBaiduMap.animateMapStatus(msu);
+                Toast.makeText(MainActivity.this,"点击poi经度："+currentPt.longitude+" 纬度："+currentPt.latitude,Toast.LENGTH_LONG).show();
+                mBaiduMap.addOverlay(new MarkerOptions().position(currentPt)
+                        .icon(BitmapDescriptorFactory
+                                .fromResource(R.mipmap.icon_openmap_mark)));
+                return false;
+            }
+        });
         myposition.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -349,6 +372,7 @@ public class MainActivity extends AppCompatActivity implements OnGetPoiSearchRes
 
     }
 
+    //OnGetPoiSearchResultListener需实现的方法
     @Override
     public void onGetPoiDetailResult(PoiDetailResult poiDetailResult) {
 
@@ -366,6 +390,7 @@ public class MainActivity extends AppCompatActivity implements OnGetPoiSearchRes
 
     }
 
+    //OnGetGeoCoderResultListener需实现的方法
     @Override
     public void onGetGeoCodeResult(GeoCodeResult geoCodeResult) {
         System.out.println("sss");
