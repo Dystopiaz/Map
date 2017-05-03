@@ -64,8 +64,9 @@ public class Search extends AppCompatActivity implements OnGetPoiSearchResultLis
             Log.d("Search.java","AcceptIntentSuccess");
             cityname = mbdlocation.getCity();
         }
-        cityname = getIntent().getStringExtra("currentCity");
-        System.out.print("city"+cityname);
+        else {
+            cityname = getIntent().getStringExtra("currentCity");
+        }
         //初始化搜索模块，注册搜索监听事件
 //        mPosiSearch = PoiSearch.newInstance();
 //        mPosiSearch.setOnGetPoiSearchResultListener(this);
