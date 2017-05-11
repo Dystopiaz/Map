@@ -20,22 +20,34 @@ import com.baidu.mapapi.SDKInitializer;
 import com.baidu.mapapi.map.BaiduMap;
 import com.baidu.mapapi.map.BitmapDescriptor;
 import com.baidu.mapapi.map.BitmapDescriptorFactory;
+import com.baidu.mapapi.map.CircleOptions;
+import com.baidu.mapapi.map.MapPoi;
 import com.baidu.mapapi.map.MapStatusUpdate;
 import com.baidu.mapapi.map.MapStatusUpdateFactory;
 import com.baidu.mapapi.map.MapView;
+import com.baidu.mapapi.map.MarkerOptions;
 import com.baidu.mapapi.map.MyLocationConfiguration;
 import com.baidu.mapapi.map.MyLocationData;
+import com.baidu.mapapi.map.OverlayOptions;
+import com.baidu.mapapi.map.Stroke;
 import com.baidu.mapapi.model.LatLng;
 import com.baidu.mapapi.search.core.CityInfo;
 import com.baidu.mapapi.search.core.PoiInfo;
 import com.baidu.mapapi.search.core.SearchResult;
+import com.baidu.mapapi.search.geocode.GeoCodeOption;
+import com.baidu.mapapi.search.geocode.GeoCodeResult;
+import com.baidu.mapapi.search.geocode.GeoCoder;
+import com.baidu.mapapi.search.geocode.OnGetGeoCoderResultListener;
+import com.baidu.mapapi.search.geocode.ReverseGeoCodeResult;
 import com.baidu.mapapi.search.poi.OnGetPoiSearchResultListener;
 import com.baidu.mapapi.search.poi.PoiCitySearchOption;
 import com.baidu.mapapi.search.poi.PoiDetailResult;
 import com.baidu.mapapi.search.poi.PoiDetailSearchOption;
 import com.baidu.mapapi.search.poi.PoiIndoorResult;
+import com.baidu.mapapi.search.poi.PoiNearbySearchOption;
 import com.baidu.mapapi.search.poi.PoiResult;
 import com.baidu.mapapi.search.poi.PoiSearch;
+import com.baidu.mapapi.search.poi.PoiSortType;
 
 import nwpu.cs.com.map.MyOrientationListener;
 import nwpu.cs.com.map.R;
@@ -44,12 +56,14 @@ import nwpu.cs.com.map.overlaytuil.PoiOverlay;
 import static com.baidu.mapapi.map.MyLocationConfiguration.*;
 
 
-public class MainActivity extends AppCompatActivity implements OnGetPoiSearchResultListener {
+public class MainActivity extends AppCompatActivity implements OnGetPoiSearchResultListener{
     //底部导航栏（未实现）
 //    private BottomNavigationView bottomNavigationView;
     private ImageButton search;
     private ImageButton myposition;
     private Button path_button;
+    private Button select_city_button;
+    private Button nearby_button;
 
     //地图
     private MapView mMapView = null;
@@ -63,14 +77,19 @@ public class MainActivity extends AppCompatActivity implements OnGetPoiSearchRes
     private double mLatitude;
     private double mLongitude;
     private String targetaddr = null;
+    //当前点击位置，用于地图点击事件和地图poi点击事件，不用于mLatitude和mLongitude的当前定位位置
+    private LatLng currentPt;
+    private String currentCity;
     // 自定义图标
     private BitmapDescriptor mIconLocation;
     private MyOrientationListener myOrientationListener;
     private float mCurrentX;
     //自定义模式
     private LocationMode mLocationMode;
-//     poi搜索
+   //poi搜索
     private PoiSearch mPoiSearch = null;
+    //编码搜索
+    private GeoCoder mSearch = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -90,12 +109,9 @@ public class MainActivity extends AppCompatActivity implements OnGetPoiSearchRes
 //        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener(){
 //            @Override
 //            public boolean onNavigationItemSelected(@NonNull MenuItem item){
-//
+//vvvvvvvvvvvvv
 //            }
 //        });
-
-
-
         this.context=this;
         //地图设置初始化
         initView();
@@ -104,13 +120,6 @@ public class MainActivity extends AppCompatActivity implements OnGetPoiSearchRes
         if(isFirstIn) {
             initLocation();
         }
-
-
-
-
-
-
-
     }
 
     //处理从其他活动中传来的intent
@@ -158,6 +167,8 @@ public class MainActivity extends AppCompatActivity implements OnGetPoiSearchRes
         search = (ImageButton)findViewById(R.id.imageButton_search);
         myposition = (ImageButton)findViewById(R.id.imageButton_myposition);
         path_button = (Button)findViewById(R.id.path_button);
+        select_city_button = (Button)findViewById(R.id.select_city_button);
+        nearby_button = (Button)findViewById(R.id.nearby_button);
         //初始化内容
         //获取地图控件引用
         mMapView = (MapView) findViewById(R.id.bmapView);
@@ -169,13 +180,51 @@ public class MainActivity extends AppCompatActivity implements OnGetPoiSearchRes
         //初始化搜索模块，注册搜索监听事件
         mPoiSearch = PoiSearch.newInstance();
         mPoiSearch.setOnGetPoiSearchResultListener(this);
+        // 初始化搜索模块，注册事件监听
+        mSearch = GeoCoder.newInstance();
 
+        mBaiduMap.setOnMapClickListener(new BaiduMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(LatLng latLng) {
+                currentPt = latLng;
+                Toast.makeText(MainActivity.this,"点击位置经度："+currentPt.longitude+" 纬度："+currentPt.latitude,Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public boolean onMapPoiClick(MapPoi mapPoi) {
+                mBaiduMap.clear();
+                currentPt = mapPoi.getPosition();
+                MapStatusUpdate msu = MapStatusUpdateFactory.newLatLng(currentPt);
+                mBaiduMap.animateMapStatus(msu);
+                Toast.makeText(MainActivity.this,"点击poi:"+mapPoi.getName()+" 经度："+currentPt.longitude+" 纬度："+currentPt.latitude,Toast.LENGTH_LONG).show();
+                mBaiduMap.addOverlay(new MarkerOptions().position(currentPt)
+                        .icon(BitmapDescriptorFactory
+                                .fromResource(R.mipmap.icon_openmap_mark)));
+                return false;
+            }
+        });
+        nearby_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(currentCity == null){
+                    Toast.makeText(MainActivity.this,"定位失败，请打开移动网络或GPS,再尝试",Toast.LENGTH_LONG).show();
+                }
+                else {
+                    Intent intent = new Intent(MainActivity.this,Search.class);
+                    intent.putExtra("currentCity",currentCity);
+//                    startActivity(intent);
+                    startActivityForResult(intent,3);
+                }
+            }
+        });
         myposition.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 LatLng latlng = new LatLng(mLatitude,mLongitude);
                 MapStatusUpdate msu = MapStatusUpdateFactory.newLatLng(latlng);
                 mBaiduMap.animateMapStatus(msu);
+                currentPt = latlng;
+                currentCity = mbdlocation.getCity();
             }
         });
 
@@ -204,22 +253,69 @@ public class MainActivity extends AppCompatActivity implements OnGetPoiSearchRes
 
             }
         });
+        select_city_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this,SelectCity.class);
+                intent.putExtra("bdlocation_data",mbdlocation);
+                startActivityForResult(intent,2);
+            }
+        });
+
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode!=1)
+        if(requestCode!=1&&requestCode!=2&&requestCode!=3)
             return;
         if(resultCode == RESULT_OK){
-            String TargetAddr = data.getStringExtra("search_target");
-            if(TargetAddr==null){
-                return;
+            if(requestCode == 1) {
+                String TargetAddr = data.getStringExtra("search_target");
+                if (TargetAddr == null) {
+                    return;
+                }
+                Log.d("MainActivity", "AcceptIntentSuccess:" + TargetAddr);
+                mPoiSearch.searchInCity((new PoiCitySearchOption())
+                        .city(mbdlocation.getCity().toString())
+                        .keyword(TargetAddr));
             }
-            Log.d("MainActivity","AcceptIntentSuccess:"+TargetAddr);
-            mPoiSearch.searchInCity((new PoiCitySearchOption())
-                    .city(mbdlocation.getCity().toString())
-                    .keyword(TargetAddr));
+            if(requestCode == 3){
+                String TargetAddr = data.getStringExtra("search_target");
+                if (TargetAddr == null) {
+                    return;
+                }
+                showNearbyArea(currentPt,1000);
+                mPoiSearch.searchNearby((new PoiNearbySearchOption())
+                        .keyword(TargetAddr).location(currentPt).sortType(PoiSortType.distance_from_near_to_far).radius(1000));
+            }
+        }
+        if(resultCode == 2){
+            String SelectCity = data.getStringExtra("SelectCityResult");
+            if(SelectCity!=null){
+                currentCity = SelectCity;
+                mBaiduMap.clear();
+                mSearch.setOnGetGeoCodeResultListener(new OnGetGeoCoderResultListener() {
+                    @Override
+                    public void onGetGeoCodeResult(GeoCodeResult geoCodeResult) {
+                        if (geoCodeResult == null || geoCodeResult.error != SearchResult.ERRORNO.NO_ERROR) {
+                            Toast.makeText(MainActivity.this, "抱歉，未能找到结果", Toast.LENGTH_LONG)
+                                    .show();
+                            return;
+                        }
+//                        mBaiduMap.clear();//上移到回调函数外
+                        mBaiduMap.setMapStatus(MapStatusUpdateFactory.newLatLng(geoCodeResult
+                                .getLocation()));
+                        Toast.makeText(MainActivity.this, geoCodeResult.getAddress(), Toast.LENGTH_LONG).show();
+                    }
+
+                    @Override
+                    public void onGetReverseGeoCodeResult(ReverseGeoCodeResult reverseGeoCodeResult) {
+
+                    }
+                });
+                mSearch.geocode(new GeoCodeOption().city(SelectCity).address(SelectCity));
+            }
         }
     }
 
@@ -239,6 +335,7 @@ public class MainActivity extends AppCompatActivity implements OnGetPoiSearchRes
         super.onDestroy();
         Log.d("MainActivity","OnDestroy");
         mPoiSearch.destroy();
+        mSearch.destroy();
         //在activity执行onDestroy时执行mMapView.onDestroy()，实现地图生命周期管理
         mMapView.onDestroy();
     }
@@ -294,11 +391,6 @@ public class MainActivity extends AppCompatActivity implements OnGetPoiSearchRes
                     item.setTitle("实时交通(on)");
                 }
                 break;
-//            case R.id.menu_location:
-//                LatLng latlng = new LatLng(mLatitude,mLongitude);
-//                MapStatusUpdate msu = MapStatusUpdateFactory.newLatLng(latlng);
-//                mBaiduMap.animateMapStatus(msu);
-//                break;
             case R.id.menu_mode_common:
                 mLocationMode = LocationMode.NORMAL;
                 break;
@@ -316,25 +408,24 @@ public class MainActivity extends AppCompatActivity implements OnGetPoiSearchRes
 
     @Override
     public void onGetPoiResult(PoiResult result) {
+
         if (result == null || result.error == SearchResult.ERRORNO.RESULT_NOT_FOUND) {
             Toast.makeText(MainActivity.this, "未找到结果", Toast.LENGTH_LONG)
                     .show();
             return;
         }
         if(result.error == SearchResult.ERRORNO.NO_ERROR){
-
-            mBaiduMap.clear();
             PoiOverlay overlay = new MyPoiOverlay(mBaiduMap);
             mBaiduMap.setOnMarkerClickListener(overlay);
             overlay.setData(result);
             overlay.addToMap();
             overlay.zoomToSpan();
-
             return;
         }
 
     }
 
+    //OnGetPoiSearchResultListener需实现的方法
     @Override
     public void onGetPoiDetailResult(PoiDetailResult poiDetailResult) {
 
@@ -351,6 +442,7 @@ public class MainActivity extends AppCompatActivity implements OnGetPoiSearchRes
     public void onGetPoiIndoorResult(PoiIndoorResult poiIndoorResult) {
 
     }
+
 
     private class MyLocationListener implements BDLocationListener
     {
@@ -378,6 +470,8 @@ public class MainActivity extends AppCompatActivity implements OnGetPoiSearchRes
                 LatLng latlng = new LatLng(bdLocation.getLatitude(),bdLocation.getLongitude());
                 MapStatusUpdate msu = MapStatusUpdateFactory.newLatLng(latlng);
                 mBaiduMap.animateMapStatus(msu);
+                currentPt = latlng;
+                currentCity = mbdlocation.getCity();
                 isFirstIn = false;
 
                 Toast.makeText(context,bdLocation.getAddrStr(),Toast.LENGTH_SHORT).show();
@@ -406,6 +500,21 @@ public class MainActivity extends AppCompatActivity implements OnGetPoiSearchRes
             // }
             return true;
         }
+    }
+    /* 对周边检索的范围进行绘制
+     * @param center
+     * @param radius
+     */
+    public void showNearbyArea(LatLng center, int radius) {
+        mBaiduMap.clear();
+        BitmapDescriptor centerBitmap = BitmapDescriptorFactory
+                .fromResource(R.mipmap.icon_openmap_mark);
+        MarkerOptions ooMarker = new MarkerOptions().position(center).icon(centerBitmap);
+        mBaiduMap.addOverlay(ooMarker);
+        OverlayOptions ooCircle = new CircleOptions().fillColor( 0xCC87CEEB )
+                .center(center).stroke(new Stroke(5, 0xFF4169E1 ))
+                .radius(radius);
+        mBaiduMap.addOverlay(ooCircle);
     }
 
 
