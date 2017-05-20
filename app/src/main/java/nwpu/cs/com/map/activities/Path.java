@@ -70,6 +70,7 @@ public class Path extends Activity implements BaiduMap.OnMapClickListener,
     // 浏览路线节点相关
     private Button mBtnPre = null; // 上一个节点
     private Button mBtnNext = null; // 下一个节点
+    private Button mNavigation = null;
     private int nodeIndex = -1; // 节点索引,供浏览节点时使用
     private RouteLine route = null;
     private MassTransitRouteLine massroute = null;
@@ -107,16 +108,15 @@ public class Path extends Activity implements BaiduMap.OnMapClickListener,
         Intent intent = getIntent();
         bdLocation = intent.getParcelableExtra("MyPosition");
         CityName = bdLocation.getCity();
-        startNodeStr = bdLocation.getStreet();
 
         CharSequence titleLable = "路线导航";
         setTitle(titleLable);
         //初始化edittext,并且初始化点击监听事件
         startpoint = (EditText)findViewById(R.id.StartPoint);
         endpoint = (EditText)findViewById(R.id.EndPoint);
-        startpoint.setText(startNodeStr.toCharArray(),0,startNodeStr.length());
-        startpoint.setFocusable(false);
-        endpoint.setFocusable(false);
+
+        startpoint.setFocusable(true);
+        endpoint.setFocusable(true);
         startpoint.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -138,6 +138,7 @@ public class Path extends Activity implements BaiduMap.OnMapClickListener,
         mBaidumap = mMapView.getMap();
         mBtnPre = (Button) findViewById(R.id.pre);
         mBtnNext = (Button) findViewById(R.id.next);
+        mNavigation = (Button)findViewById(R.id.navigation);
         mBtnPre.setVisibility(View.INVISIBLE);
         mBtnNext.setVisibility(View.INVISIBLE);
         // 地图点击事件处理
@@ -173,13 +174,19 @@ public class Path extends Activity implements BaiduMap.OnMapClickListener,
      * @param v
      */
     public void searchButtonProcess(View v) {
-        if (v.getId() == R.id.toSearch){
+        PlanNode stNode;
+        PlanNode enNode;
+        if(endpoint.getText().toString()==null){
+            Toast.makeText(this,"请输入目的地",Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (endpoint.getText().toString()!=null){
 
-            if(startpoint.getText().toString()!=null) {
+            if(!startpoint.getText().toString().equals("我的位置")) {
                 startNodeStr = startpoint.getText().toString();
             }
             endNodeStr =  endpoint.getText().toString();
-            System.out.println("mark1");
+            Log.d("start and end point",startNodeStr+">"+endNodeStr);
         }
         // 重置浏览节点的路线数据
         route = null;
@@ -188,8 +195,11 @@ public class Path extends Activity implements BaiduMap.OnMapClickListener,
         mBaidumap.clear();
         // 处理搜索按钮响应
         // 设置起终点信息，对于tranist search 来说，城市名无意义
-        PlanNode stNode = PlanNode.withCityNameAndPlaceName(CityName, startNodeStr);
-        PlanNode enNode = PlanNode.withCityNameAndPlaceName(CityName, endNodeStr);
+        if(startpoint.getText().toString().equals("我的位置"))
+            stNode = PlanNode.withLocation(new LatLng(bdLocation.getLatitude(),bdLocation.getLongitude()));
+        else
+            stNode = PlanNode.withCityNameAndPlaceName(CityName, startNodeStr);
+        enNode = PlanNode.withCityNameAndPlaceName(CityName, endNodeStr);
 
         //点击开始搜索按钮，获取起始地点和目的地点
         // 实际使用中请对起点终点城市进行正确的设定
@@ -205,7 +215,7 @@ public class Path extends Activity implements BaiduMap.OnMapClickListener,
             nowSearchType = 1;
         } else if (v.getId() == R.id.transit) {
             mSearch.transitSearch((new TransitRoutePlanOption())
-                    .from(stNode).city("北京").to(enNode));
+                    .from(stNode).city(CityName).to(enNode));
             nowSearchType = 2;
         } else if (v.getId() == R.id.walk) {
             mSearch.walkingSearch((new WalkingRoutePlanOption())
@@ -337,26 +347,32 @@ public class Path extends Activity implements BaiduMap.OnMapClickListener,
      * 切换路线图标，刷新地图使其生效
      * 注意： 起终点图标使用中心对齐.
      */
-    public void changeRouteIcon(View v) {
-        if (routeOverlay == null) {
-            return;
-        }
-        if (useDefaultIcon) {
-            ((Button) v).setText("自定义起终点图标");
-            Toast.makeText(this,
-                    "将使用系统起终点图标",
-                    Toast.LENGTH_SHORT).show();
-
-        } else {
-            ((Button) v).setText("系统起终点图标");
-            Toast.makeText(this,
-                    "将使用自定义起终点图标",
-                    Toast.LENGTH_SHORT).show();
-
-        }
-        useDefaultIcon = !useDefaultIcon;
-        routeOverlay.removeFromMap();
-        routeOverlay.addToMap();
+//    public void changeRouteIcon(View v) {
+//        if (routeOverlay == null) {
+//            return;
+//        }
+//        if (useDefaultIcon) {
+//            ((Button) v).setText("自定义起终点图标");
+//            Toast.makeText(this,
+//                    "将使用系统起终点图标",
+//                    Toast.LENGTH_SHORT).show();
+//
+//        } else {
+//            ((Button) v).setText("系统起终点图标");
+//            Toast.makeText(this,
+//                    "将使用自定义起终点图标",
+//                    Toast.LENGTH_SHORT).show();
+//
+//        }
+//        useDefaultIcon = !useDefaultIcon;
+//        routeOverlay.removeFromMap();
+//        routeOverlay.addToMap();
+//    }
+    public void changeRouteIcon(View v){
+        Intent intent = new Intent(Path.this,navigation.class);
+        intent.putExtra("path_route",route);
+        intent.putExtra("bdlocation",bdLocation);
+        startActivity(intent);
     }
 
 
@@ -434,6 +450,7 @@ public class Path extends Activity implements BaiduMap.OnMapClickListener,
             nodeIndex = -1;
             mBtnPre.setVisibility(View.VISIBLE);
             mBtnNext.setVisibility(View.VISIBLE);
+            mNavigation.setVisibility(View.VISIBLE);
 
 
             if (result.getRouteLines().size() > 1 ) {

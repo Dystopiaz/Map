@@ -38,7 +38,7 @@
 
         <meta-data
             android:name="com.baidu.lbsapi.API_KEY"
-            android:value="CYopfwn3hquLumNNhNZLD9IQzuMcevwa" />
+            android:value="pf8vPrUNMYKLLxv3azAOeEPwQvSxRGGo" />
 
         <service
             android:name="com.baidu.location.f"
@@ -52,7 +52,8 @@
 
         <activity android:name=".activities.Search" />
         <activity android:name=".activities.Path" />
-        <activity android:name=".activities.SelectCity"></activity>
+        <activity android:name=".activities.SelectCity" />
+        <activity android:name=".activities.navigation"></activity>
     </application>
 
 </manifest>

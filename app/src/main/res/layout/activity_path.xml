@@ -25,7 +25,7 @@
                 android:id="@+id/StartPoint"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="我的当前位置"/>
+                android:text="我的位置"/>
         </LinearLayout>
 
         <LinearLayout
@@ -45,12 +45,6 @@
         </LinearLayout>
     </LinearLayout>
 
-    <Button
-        android:id="@+id/toSearch"
-        android:layout_height="wrap_content"
-        android:onClick="searchButtonProcess"
-        android:text="开始搜索"
-        android:layout_width="fill_parent" />
 
     <LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
@@ -133,13 +127,14 @@
             android:orientation="vertical" >
 
             <Button
-                android:id="@+id/customicon"
+                android:id="@+id/navigation"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 android:layout_marginTop="10dip"
                 android:layout_weight="1.0"
                 android:onClick="changeRouteIcon"
-                android:text="自定义起终点图标" />
+                android:text="开始导航"
+                android:visibility="invisible"/>
         </LinearLayout>
 
         <LinearLayout
