@@ -35,5 +35,9 @@
         android:id="@+id/menu_mode_compass"
         app:showAsAction="never"
         android:title="罗盘模式"/>
+    <item
+        android:id="@+id/HeatMap"
+        app:showAsAction="never"
+        android:title="历史热点图"/>
 
 </menu>

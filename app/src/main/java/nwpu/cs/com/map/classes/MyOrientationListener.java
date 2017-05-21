@@ -1,4 +1,4 @@
-package nwpu.cs.com.map;
+package nwpu.cs.com.map.classes;
 
 import android.content.Context;
 import android.hardware.Sensor;

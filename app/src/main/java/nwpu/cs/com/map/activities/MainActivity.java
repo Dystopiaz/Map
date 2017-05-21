@@ -31,7 +31,6 @@ import com.baidu.mapapi.map.MyLocationData;
 import com.baidu.mapapi.map.OverlayOptions;
 import com.baidu.mapapi.map.Stroke;
 import com.baidu.mapapi.model.LatLng;
-import com.baidu.mapapi.search.core.CityInfo;
 import com.baidu.mapapi.search.core.PoiInfo;
 import com.baidu.mapapi.search.core.SearchResult;
 import com.baidu.mapapi.search.geocode.GeoCodeOption;
@@ -49,7 +48,7 @@ import com.baidu.mapapi.search.poi.PoiResult;
 import com.baidu.mapapi.search.poi.PoiSearch;
 import com.baidu.mapapi.search.poi.PoiSortType;
 
-import nwpu.cs.com.map.MyOrientationListener;
+import nwpu.cs.com.map.classes.MyOrientationListener;
 import nwpu.cs.com.map.R;
 import nwpu.cs.com.map.overlaytuil.PoiOverlay;
 
@@ -399,6 +398,10 @@ public class MainActivity extends AppCompatActivity implements OnGetPoiSearchRes
                 break;
             case R.id.menu_mode_compass:
                 mLocationMode = LocationMode.COMPASS;
+                break;
+            case R.id.HeatMap:
+                Intent intent = new Intent(MainActivity.this,HeatMap.class);
+                startActivity(intent);
                 break;
             default:
                 break;

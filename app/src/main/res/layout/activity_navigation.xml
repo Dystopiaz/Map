@@ -19,6 +19,45 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
+            android:layout_alignParentTop="true"
+            android:layout_above="@+id/information">
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <ImageView
+                    android:id="@+id/imagebutton_imformation"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:src="@mipmap/pre_"
+                    android:layout_centerInParent="true"/>
+                <Button
+                    android:id="@+id/exit_navi"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:text="结束导航"
+                    android:layout_alignParentRight="true"
+                    android:background="@mipmap/button_down" />
+                <Button
+                    android:id="@+id/music_switch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:text="音乐开"/>
+            </RelativeLayout>
+            <ListView
+                android:id="@+id/listview_station"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#ffff"
+                android:visibility="invisible">
+
+            </ListView>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/information"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
             android:layout_alignParentBottom="true">
             <LinearLayout
                 android:layout_width="match_parent"
@@ -31,15 +70,15 @@
                     android:layout_weight="1"
                     android:gravity="center"
                     android:text="下一站:"
-                    android:textSize="35dp"
+                    android:textSize="25dp"
                     android:textColor="#f000"/>
                 <TextView
                     android:id="@+id/nextstation"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="2"
+                    android:layout_weight="3"
                     android:text="请按导航上车"
-                    android:textSize="40dp"
+                    android:textSize="35dp"
                     android:gravity="center"
                     android:textColor="#ff0f"/>
             </LinearLayout>

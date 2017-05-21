@@ -53,7 +53,8 @@
         <activity android:name=".activities.Search" />
         <activity android:name=".activities.Path" />
         <activity android:name=".activities.SelectCity" />
-        <activity android:name=".activities.navigation"></activity>
+        <activity android:name=".activities.navigation" />
+        <activity android:name=".activities.HeatMap"></activity>
     </application>
 
 </manifest>
